@@ -1,6 +1,9 @@
 package com.example.cachedemo;
 
+import javax.cache.Caching;
+
 import org.infinispan.configuration.cache.ConfigurationBuilder;
+import org.infinispan.jcache.embedded.JCacheManager;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.transaction.LockingMode;
 import org.infinispan.transaction.TransactionMode;
@@ -51,7 +54,7 @@ public class CacheConfig {
 	}
 
 	@Bean
-	public org.infinispan.Cache<Object,Object> infinispanCache(DefaultCacheManager infinispanCacheManager) {
+	public javax.cache.Cache<Object,Object> infinispanCache(DefaultCacheManager infinispanCacheManager) {
 		infinispanCacheManager.defineConfiguration("demo", new ConfigurationBuilder()
 				.transaction()
 				.autoCommit(false)
@@ -61,8 +64,11 @@ public class CacheConfig {
 				.build());
 
 		var cache = infinispanCacheManager.getCache("demo");
-		var txManager = cache.getAdvancedCache().getTransactionManager();
-		var manager2 = EmbeddedTransactionManager.getInstance();
-		return cache;
+
+		var provider = Caching.getCachingProvider("org.infinispan.jcache.embedded.JCachingProvider");
+		var manager = (JCacheManager)provider.getCacheManager();
+		var jcache = manager.getOrCreateCache("demo", cache);
+
+		return jcache;
 	}
 }

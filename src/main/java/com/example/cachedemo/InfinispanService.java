@@ -1,5 +1,6 @@
 package com.example.cachedemo;
 
+import javax.cache.Cache;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Component;
 public class InfinispanService implements DemoService {
 
 	@Autowired
-	private org.infinispan.Cache cache;
-
+	private Cache cache;
 
 	public String getValue(String key) {
 		return (String) cache.get(key);
