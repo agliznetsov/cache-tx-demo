@@ -8,15 +8,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class CacheDemoApplicationTests {
+	String key = "key";
+	String oldValue = "oldValue";
+	String newValue = "newValue";
 
 	@Autowired
-	EhcacheService demoService;
+	EhcacheService ehcacheService;
+
+	@Autowired
+	InfinispanService infinispanService;
 
 	@Test
 	void ehcacheTest() {
-		var key = "key";
-		var oldValue = "oldValue";
-		var newValue = "newValue";
+		rollbackTest(ehcacheService);
+	}
+
+	@Test
+	void infinispanTest() {
+		rollbackTest(infinispanService);
+	}
+
+	private void rollbackTest(DemoService demoService) {
 		demoService.setValue(key, oldValue);
 		assertThat(demoService.getValue(key)).isEqualTo(oldValue);
 
@@ -27,5 +39,6 @@ class CacheDemoApplicationTests {
 		}
 		assertThat(demoService.getValue(key)).isEqualTo(oldValue);
 	}
+
 
 }

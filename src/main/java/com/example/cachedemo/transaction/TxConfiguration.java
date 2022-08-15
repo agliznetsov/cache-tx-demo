@@ -14,8 +14,10 @@ public class TxConfiguration {
 
 	@Bean
 	@Primary
-	public PlatformTransactionManager chainedTransactionManager(EhcacheTransactionManager ehcacheTransactionManager, JpaTransactionManager jpaTransactionManager) {
-		return new ChainedTransactionManager(ehcacheTransactionManager, jpaTransactionManager);
+	public PlatformTransactionManager chainedTransactionManager(EhcacheTransactionManager ehcacheTransactionManager,
+	                                                            JpaTransactionManager jpaTransactionManager,
+	                                                            InfinispanTransactionManager infinispanTransactionManager) {
+		return new ChainedTransactionManager(ehcacheTransactionManager, infinispanTransactionManager, jpaTransactionManager);
 	}
 
 	@Bean
